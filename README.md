@@ -385,3 +385,52 @@ void dp01_func() {
 }
 
 ```
+
+
+
+### 最长公共子序列(LCS)
+
+* 题目描述: 给定两个字符串(或数字序列)A和B,求一个字符串,使得这个字符串是A和B的最长公共部分(子序列可以不连续)
+    * 样例:
+ 
+| 字符位置 | 1  | 2  | 3  | 4  | 5  | 6  | 7  | 8  | 9  |
+| -------- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| A        | s  | a  | d  | s  | t  | o  | r  | y  |    |
+| B        | a  | d  | m  | i  | n  | s  | o  | r  | y  |
+| LCS      | a  | d  | s  | o  | r  | y  |    |    |    |
+
+
+* 题目求解步骤:
+    * 比较a[i] 和 b[j] 有两种情况
+    * a[i] = b[j], 则 lcs应为lcs(a[1...i-1] 和 b[1...j-1])+1
+    * a[i] != b[j] ,则 字符串A的前i位和字符串B的前j位的LCS无法延长,即lcs没有增大, lcs继承为 lcs(a[1...i-1] 和 b[1...j])与lcs(a[1...i] 和 b[1...j-1])中的最大值
+    * 假设dp[i][j]表示字符串A的前i位和字符串B的前j位的最长公共子序列(lcs)
+    * 状态转移方程
+        * dp[i][j] = d[i-1][j-1] + 1,   a[i] = b[j]
+        * dp[i][j] = max(dp[i-1][j], dp[i][j-1]),  a[i]!= b[j]
+    * 边界: dp[i][0] = dp[0][j] = 0
+* LCS_dp 代码
+
+```c
+        int lcs_len(int a[], int n, int b[], int m){
+            //初始化
+            int dp[maxN][maxN];
+            for(int i = 0; i <= n; i++)
+                dp[i][0] = 0;
+            for(int j = 0; j <= m; j++)
+                dp[0][j] = 0;
+            //比较a[i] 和b[j]
+            for(int i = 1; i <= n; i++)
+                for(int j = 1; j <= m; j++){
+                    if(a[i] == b[j])
+                        dp[i][j] = dp[i-1][j-1] + 1;    //相等,lcs+1
+                    else
+                        dp[i][j] = max(dp[i-1][j], dp[i][j-1]); //lcs没有增大，继承dp[i-1][j], dp[i][j-1]中的最大值
+            }
+            return dp[n][m]; // 返回最长公共子序列长度
+        }
+```
+
+
+
+
